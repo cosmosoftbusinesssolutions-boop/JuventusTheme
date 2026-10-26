@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>TV Theme advert (square)</title>
+<link rel="stylesheet" href="ad.css">
+<style>
+  :root { --w: 1080px; --h: 1080px; }
+  .stage {
+    background:
+      radial-gradient(ellipse 70% 45% at 100% 100%, rgba(212, 175, 55, 0.35), transparent 70%),
+      linear-gradient(180deg, rgba(5,5,5,0.96) 0%, rgba(5,5,5,0.8) 55%, rgba(5,5,5,0.6) 100%),
+      repeating-linear-gradient(90deg, #050505 0 60px, #e9e9e9 60px 120px);
+  }
+  .copy {
+    position: absolute;
+    left: 80px;
+    right: 80px;
+    top: 70px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .wordmark { font-size: 22px; }
+  .badge { width: 44px; height: 44px; }
+  .eyebrow { font-size: 19px; }
+  h1 { font-size: 92px; }
+  .tv { left: 80px; top: 470px; width: 760px; }
+  .lede { font-size: 24px; max-width: 760px; }
+  .shot.quick { left: 760px; top: 520px; width: 260px; height: 293px; }
+  .bottom {
+    position: absolute;
+    left: 80px;
+    right: 80px;
+    bottom: 56px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .cta { font-size: 22px; padding: 18px 34px; }
+  .chips { display: flex; gap: 12px; }
+  .chip {
+    border: 1px solid rgba(244, 244, 244, 0.35);
+    border-radius: 999px;
+    padding: 10px 18px;
+    font-size: 18px;
+    color: var(--white);
+    background: rgba(0, 0, 0, 0.55);
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="copy">
+    <div class="wordmark"><span class="badge"></span>TV THEME</div>
+    <div class="eyebrow">For Android TV &amp; Google TV</div>
+    <h1>Black, white<br><span class="gold">&amp; gold.</span></h1>
+    <p class="lede">The bold home screen for your TV, with Plex, family profiles and quick settings built in.</p>
+  </div>
+
+  <div class="tv"><img src="screenshots/01-home.png" alt="TV Theme home screen"></div>
+  <div class="shot quick">
+    <img src="screenshots/06-quick-settings.png" alt="Quick settings" style="object-position: right center">
+  </div>
+
+  <div class="bottom">
+    <div class="chips">
+      <span class="chip">Plex built in</span>
+      <span class="chip">Kids profiles</span>
+      <span class="chip">No ads</span>
+    </div>
+    <span class="cta">Try free for 14 days</span>
+  </div>
+</div>
+</body>
+</html>

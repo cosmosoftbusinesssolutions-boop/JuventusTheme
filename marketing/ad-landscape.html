@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>TV Theme advert (landscape)</title>
+<link rel="stylesheet" href="ad.css">
+<style>
+  :root { --w: 1920px; --h: 1080px; }
+  .copy {
+    position: absolute;
+    left: 110px;
+    top: 96px;
+    width: 720px;
+    display: flex;
+    flex-direction: column;
+    gap: 34px;
+  }
+  h1 { font-size: 112px; }
+  .lede { font-size: 28px; max-width: 640px; }
+  .tv { left: 880px; top: 170px; width: 940px; }
+  /* Quick settings is cropped to just its side panel; profiles sits below the TV. */
+  .shot.quick { left: 1540px; top: 500px; width: 330px; height: 372px; }
+  .shot.profiles { left: 930px; top: 800px; width: 400px; height: 225px; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="copy">
+    <div class="wordmark"><span class="badge"></span>TV THEME</div>
+    <div class="eyebrow">For Android TV &amp; Google TV</div>
+    <h1>Your TV.<br>Black, white<br><span class="gold">&amp; gold.</span></h1>
+    <p class="lede">A bold black-and-white home screen for your TV, with gold highlights, your Plex
+      library and a profile for everyone in the family.</p>
+    <ul class="features">
+      <li>Striking striped home screen, built for the remote</li>
+      <li>Plex built in: Continue watching, watchlist, libraries</li>
+      <li>Profiles with PINs and a safe kids mode</li>
+      <li>Quick settings one click away, and no ads</li>
+    </ul>
+    <div class="cta-row">
+      <span class="cta">Try it free for 14 days</span>
+      <span class="note">Coming soon to Google Play</span>
+    </div>
+  </div>
+
+  <div class="tv"><img src="screenshots/01-home.png" alt="TV Theme home screen"></div>
+  <div class="shot profiles">
+    <img src="screenshots/04-profiles.png" alt="Profile picker">
+    <span class="label">Profiles</span>
+  </div>
+  <div class="shot quick">
+    <img src="screenshots/06-quick-settings.png" alt="Quick settings" style="object-position: right center">
+  </div>
+</div>
+</body>
+</html>

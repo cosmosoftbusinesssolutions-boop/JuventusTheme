@@ -1,0 +1,156 @@
+/* Shared styles for the TV Theme adverts. Rendered at fixed pixel sizes (see the HTML files). */
+:root {
+  --black: #050505;
+  --panel: #141414;
+  --white: #f4f4f4;
+  --muted: #a8a8a8;
+  --gold: #d4af37;
+  --gold-soft: rgba(212, 175, 55, 0.18);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: var(--w);
+  height: var(--h);
+  overflow: hidden;
+  background: var(--black);
+  color: var(--white);
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+/* Black-and-white stripes that fade out toward the copy, with a gold glow, like the app's wallpaper. */
+.stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(ellipse 60% 55% at 100% 100%, rgba(212, 175, 55, 0.35), transparent 70%),
+    linear-gradient(90deg, rgba(5,5,5,0.97) 0%, rgba(5,5,5,0.86) 45%, rgba(5,5,5,0.55) 100%),
+    repeating-linear-gradient(90deg, #050505 0 80px, #e9e9e9 80px 160px);
+}
+
+.wordmark {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  font-family: Bahnschrift, "Segoe UI", sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  font-size: 26px;
+}
+
+/* The app icon: stripes in a gold-edged badge. */
+.badge {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  border: 3px solid var(--gold);
+  background: repeating-linear-gradient(90deg, #111 0 8px, #f4f4f4 8px 16px);
+}
+
+.eyebrow {
+  font-family: Bahnschrift, "Segoe UI", sans-serif;
+  color: var(--gold);
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  font-size: 22px;
+  text-transform: uppercase;
+}
+
+h1 {
+  font-family: Bahnschrift, "Segoe UI", sans-serif;
+  font-stretch: condensed;
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+h1 .gold { color: var(--gold); }
+
+.lede {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.features { list-style: none; display: grid; gap: 16px; }
+.features li {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 24px;
+}
+.features li::before {
+  content: "";
+  flex: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 0 5px var(--gold-soft);
+}
+
+.cta-row { display: flex; align-items: center; gap: 28px; }
+.cta {
+  display: inline-block;
+  background: var(--gold);
+  color: #0a0a0a;
+  font-family: Bahnschrift, "Segoe UI", sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  padding: 20px 40px;
+  font-size: 24px;
+  box-shadow: 0 10px 40px rgba(212, 175, 55, 0.35);
+}
+.note { color: var(--muted); font-size: 20px; }
+
+/* A TV set holding a screenshot. */
+.tv {
+  position: absolute;
+  background: #0b0b0b;
+  border: 2px solid #2a2a2a;
+  border-radius: 18px;
+  padding: 12px;
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+}
+.tv img { display: block; width: 100%; border-radius: 8px; }
+.tv::after {
+  /* Stand */
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -34px;
+  width: 34%;
+  height: 22px;
+  transform: translateX(-50%);
+  border-radius: 0 0 14px 14px;
+  background: linear-gradient(#1c1c1c, #0e0e0e);
+}
+
+/* Smaller floating screens that overlap the TV. */
+.shot {
+  position: absolute;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid rgba(212, 175, 55, 0.65);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8);
+  background: #000;
+}
+.shot img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.shot .label {
+  position: absolute;
+  left: 14px;
+  bottom: 12px;
+  background: rgba(0, 0, 0, 0.78);
+  color: var(--white);
+  font-family: Bahnschrift, "Segoe UI", sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 16px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border-left: 3px solid var(--gold);
+}
