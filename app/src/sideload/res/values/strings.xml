@@ -1,0 +1,4 @@
+<resources>
+    <string name="home_helper_service_label">TV Theme Home button</string>
+    <string name="home_helper_service_description">Opens TV Theme when you press Home. It only watches for the Home button and for the built-in home screen opening; it doesn\'t read screen content or collect data.</string>
+</resources>

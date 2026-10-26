@@ -71,12 +71,21 @@ JDK 17 (`jdk17`), Android SDK (`sdk`), and Gradle 8.9. `local.properties` points
 
 ## Build
 
+There are two builds:
+- **play**: for Google Play. No Home button helper (accessibility service), and it uses the system photo picker.
+- **sideload**: the APK you install yourself. It includes the Home button helper and the in-app photo grid.
+
 ```powershell
 $env:JAVA_HOME = "D:\MyPersonal\AndroidTools\jdk17"
-.\gradlew.bat assembleDebug
+.\gradlew.bat assembleSideloadRelease   # APK for USB stick / adb
+.\gradlew.bat bundlePlayRelease         # App Bundle to upload to Google Play
 ```
 
-Output: `app\build\outputs\apk\debug\app-debug.apk`
+Outputs:
+- `app\build\outputs\apk\sideload\release\app-sideload-release.apk`
+- `app\build\outputs\bundle\playRelease\app-play-release.aab`
+
+See [PUBLISHING.md](PUBLISHING.md) for the Google Play steps.
 
 ## Install on a TV
 

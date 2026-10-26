@@ -8,14 +8,31 @@ plugins {
 
 android {
     namespace = "com.cosmosoft.tvtheme"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.cosmosoft.tvtheme"
         minSdk = 26
-        targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        // Google Play requires new apps and updates to target a recent API level.
+        targetSdk = 36
+        versionCode = 2
+        versionName = "1.0.1"
+    }
+
+    // "play" is the Google Play build: no accessibility service and no broad photo access, per Play policy.
+    // "sideload" is the APK for installing by USB stick or adb, with the Home button helper and photo grid.
+    flavorDimensions += "store"
+    productFlavors {
+        create("play") {
+            dimension = "store"
+            buildConfigField("boolean", "HOME_BUTTON_HELPER", "false")
+            buildConfigField("boolean", "SYSTEM_PHOTO_PICKER", "true")
+        }
+        create("sideload") {
+            dimension = "store"
+            buildConfigField("boolean", "HOME_BUTTON_HELPER", "true")
+            buildConfigField("boolean", "SYSTEM_PHOTO_PICKER", "false")
+        }
     }
 
     // Release signing comes from keystore.properties in the project root, which is never committed.
@@ -51,6 +68,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 

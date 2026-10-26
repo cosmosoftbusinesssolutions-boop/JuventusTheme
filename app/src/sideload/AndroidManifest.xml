@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Extras for the sideloaded APK only. The Google Play build ("play" flavor) leaves these out. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Choosing your own picture as wallpaper from the TV's photo library. -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
+    <application>
+        <!-- Home button helper for Google TV / Fire TV, which don't let users pick a home app. -->
+        <service
+            android:name=".home.HomeButtonService"
+            android:exported="true"
+            android:label="@string/home_helper_service_label"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/home_button_service" />
+        </service>
+    </application>
+</manifest>

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.provider.Settings
+import com.cosmosoft.tvtheme.BuildConfig
 import java.net.Inet4Address
 
 enum class TvPlatform { GoogleTv, AndroidTv, FireTv }
@@ -32,10 +33,15 @@ object HomeSetup {
         return resolved?.activityInfo?.packageName == context.packageName
     }
 
+    /** Whether this build includes the Home button helper (only the sideload APK does). */
+    val helperAvailable get() = BuildConfig.HOME_BUTTON_HELPER
+
     fun isHelperEnabled(context: Context): Boolean {
+        if (!helperAvailable) return false
         val enabled = Settings.Secure.getString(context.contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES)
             ?: return false
-        val ours = ComponentName(context, HomeButtonService::class.java)
+        // By name, because the service class only exists in the sideload build.
+        val ours = ComponentName(context, "com.cosmosoft.tvtheme.home.HomeButtonService")
         return enabled.split(':').any { ComponentName.unflattenFromString(it) == ours }
     }
 

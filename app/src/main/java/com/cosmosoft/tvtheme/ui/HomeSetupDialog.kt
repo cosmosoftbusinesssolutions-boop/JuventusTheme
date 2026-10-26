@@ -83,19 +83,26 @@ fun HomeSetupDialog(refreshKey: Int, onDismiss: () -> Unit) {
                                 modifier = Modifier.focusRequester(firstFocus),
                             )
                         }
-                        ListRow(
-                            title = stringResource(R.string.home_setup_helper),
-                            subtitle = stringResource(R.string.home_setup_helper_hint),
-                            onClick = { page = SetupPage.HelperDisclosure },
-                            modifier = if (platform != TvPlatform.AndroidTv) Modifier.focusRequester(firstFocus) else Modifier,
-                        ) {
-                            Text(stringResource(if (helperOn) R.string.state_on else R.string.state_off))
+                        if (HomeSetup.helperAvailable) {
+                            ListRow(
+                                title = stringResource(R.string.home_setup_helper),
+                                subtitle = stringResource(R.string.home_setup_helper_hint),
+                                onClick = { page = SetupPage.HelperDisclosure },
+                                modifier = if (platform != TvPlatform.AndroidTv) Modifier.focusRequester(firstFocus) else Modifier,
+                            ) {
+                                Text(stringResource(if (helperOn) R.string.state_on else R.string.state_off))
+                            }
                         }
+                        val adbFirst = platform != TvPlatform.AndroidTv && !HomeSetup.helperAvailable
                         ListRow(
                             title = stringResource(R.string.home_setup_adb),
                             subtitle = stringResource(R.string.home_setup_adb_hint),
                             onClick = { page = SetupPage.Adb },
+                            modifier = if (adbFirst) Modifier.focusRequester(firstFocus) else Modifier,
                         )
+                        if (platform != TvPlatform.AndroidTv && !HomeSetup.helperAvailable) {
+                            Text(stringResource(R.string.home_setup_app_list_hint), color = theme.text.copy(alpha = 0.7f))
+                        }
                     }
                     // Play policy: explain what the accessibility service does before sending people to turn it on.
                     SetupPage.HelperDisclosure -> {

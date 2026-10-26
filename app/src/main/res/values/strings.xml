@@ -154,9 +154,9 @@
     <string name="home_setup_adb_hint">Turns off the built-in home screen with ADB. Most reliable.</string>
     <string name="home_setup_adb_steps">1. On the TV, turn on Developer options and Network debugging (or USB debugging).\n2. On a computer with Android platform-tools, run:</string>
     <string name="home_setup_adb_undo">To undo later:</string>
+    <string name="home_setup_app_list_hint">Or open TV Theme from your TV\'s app list whenever you like.</string>
+    <string name="pictures_no_picker">This TV doesn\'t have a photo picker, so your own pictures can\'t be used here.</string>
     <string name="home_setup_adb_no_ip">&lt;TV IP address&gt;</string>
-    <string name="home_helper_service_label">TV Theme Home button</string>
-    <string name="home_helper_service_description">Opens TV Theme when you press Home. It only watches for the Home button and for the built-in home screen opening; it doesn\'t read screen content or collect data.</string>
 
     <string name="quick_section_status">Status</string>
     <string name="quick_section_settings">TV settings</string>

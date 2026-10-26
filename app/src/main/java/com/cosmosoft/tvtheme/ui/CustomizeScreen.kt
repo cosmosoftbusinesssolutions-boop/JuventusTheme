@@ -1,6 +1,7 @@
 package com.cosmosoft.tvtheme.ui
 
 import android.Manifest
+import android.content.ActivityNotFoundException
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
@@ -10,6 +11,7 @@ import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -68,6 +70,7 @@ import androidx.tv.material3.CardDefaults
 import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
+import com.cosmosoft.tvtheme.BuildConfig
 import com.cosmosoft.tvtheme.R
 import com.cosmosoft.tvtheme.data.BuiltinWallpapers
 import com.cosmosoft.tvtheme.data.LaunchableApp
@@ -126,8 +129,28 @@ fun CustomizeScreen(
             Toast.makeText(context, R.string.pictures_denied, Toast.LENGTH_LONG).show()
         }
     }
+    val saveAsWallpaper = { uri: Uri ->
+        scope.launch {
+            val saved = withContext(Dispatchers.IO) { Wallpapers.saveCustom(context, uri, settings.profileId) }
+            if (saved) {
+                settings.wallpaper = WallpaperChoice.Custom(System.currentTimeMillis())
+            } else {
+                Toast.makeText(context, R.string.pictures_failed, Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+    // Google Play build: the system photo picker grants access to just the one picture chosen.
+    val systemPicker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        if (uri != null) saveAsWallpaper(uri)
+    }
     val choosePicture = {
-        if (ContextCompat.checkSelfPermission(context, PhotoPermission) == PackageManager.PERMISSION_GRANTED) {
+        if (BuildConfig.SYSTEM_PHOTO_PICKER) {
+            try {
+                systemPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            } catch (e: ActivityNotFoundException) {
+                Toast.makeText(context, R.string.pictures_no_picker, Toast.LENGTH_LONG).show()
+            }
+        } else if (ContextCompat.checkSelfPermission(context, PhotoPermission) == PackageManager.PERMISSION_GRANTED) {
             pickingPicture = true
         } else {
             requestPhotos.launch(PhotoPermission)
@@ -309,14 +332,7 @@ fun CustomizeScreen(
             onDismiss = { pickingPicture = false },
             onPicked = { uri ->
                 pickingPicture = false
-                scope.launch {
-                    val saved = withContext(Dispatchers.IO) { Wallpapers.saveCustom(context, uri, settings.profileId) }
-                    if (saved) {
-                        settings.wallpaper = WallpaperChoice.Custom(System.currentTimeMillis())
-                    } else {
-                        Toast.makeText(context, R.string.pictures_failed, Toast.LENGTH_LONG).show()
-                    }
-                }
+                saveAsWallpaper(uri)
             },
         )
     }
