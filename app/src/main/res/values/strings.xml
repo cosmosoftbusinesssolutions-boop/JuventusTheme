@@ -1,0 +1,187 @@
+<resources>
+    <string name="app_name">TV Theme</string>
+
+    <string name="nav_home">Home</string>
+    <string name="nav_apps">Apps</string>
+    <string name="nav_customize">Customize</string>
+    <string name="nav_quick_settings">Quick settings</string>
+
+    <string name="row_favorites">Favorites</string>
+    <string name="row_tv_apps">TV apps</string>
+    <string name="row_other_apps">More apps</string>
+    <string name="favorites_hint">Long-press any app and choose Add to favorites.</string>
+    <string name="no_apps">No apps found</string>
+
+    <string name="apps_title">All apps</string>
+    <string name="apps_hint">%1$d apps · long-press an app for more options</string>
+
+    <string name="options_open">Open</string>
+    <string name="options_add_favorite">Add to favorites</string>
+    <string name="options_remove_favorite">Remove from favorites</string>
+    <string name="options_move_left">Move left in favorites</string>
+    <string name="options_move_right">Move right in favorites</string>
+    <string name="options_hide">Hide app</string>
+    <string name="options_app_info">App info</string>
+
+    <string name="customize_wallpaper">Wallpaper &amp; colors</string>
+    <string name="customize_wallpaper_hint">Picture wallpapers recolor the whole launcher to match.</string>
+    <string name="wallpaper_your_picture">Your picture</string>
+    <string name="customize_rows">Home screen rows</string>
+    <string name="customize_hidden">Hidden apps</string>
+    <string name="customize_hidden_none">No hidden apps. Long-press an app and choose Hide app.</string>
+    <string name="customize_unhide">Select to show it again</string>
+    <string name="customize_default_home">Default home screen</string>
+    <string name="customize_open_home_settings">Open home app settings</string>
+    <string name="customize_default_home_hint">Choose TV Theme as the home app so the Home button opens it.</string>
+    <string name="state_on">On</string>
+    <string name="state_off">Off</string>
+
+    <string name="pictures_title">Choose a picture</string>
+    <string name="pictures_loading">Loading pictures…</string>
+    <string name="pictures_empty">No pictures found on this TV.</string>
+    <string name="pictures_denied">Allow photo access to use your own picture.</string>
+    <string name="pictures_failed">That picture couldn\'t be opened.</string>
+
+    <string name="row_continue_watching">Continue watching</string>
+    <string name="row_watchlist">Watchlist</string>
+    <string name="row_recently_added">Recently added in %1$s</string>
+
+    <string name="plex_section">Plex</string>
+    <string name="plex_connect">Connect Plex</string>
+    <string name="plex_connect_hint">Show Continue watching, your watchlist and your libraries on Home.</string>
+    <string name="plex_account">Plex account</string>
+    <string name="plex_signed_in">Signed in</string>
+    <string name="plex_server">Server</string>
+    <string name="plex_server_none">No server selected</string>
+    <string name="plex_sign_out">Sign out of Plex</string>
+    <string name="plex_link_title">Connect your Plex account</string>
+    <string name="plex_link_step">On your phone or computer, go to</string>
+    <string name="plex_link_url">plex.tv/link</string>
+    <string name="plex_link_enter">and enter this code:</string>
+    <string name="plex_link_waiting">Waiting for you to enter the code…</string>
+    <string name="plex_loading">Connecting to Plex…</string>
+    <string name="plex_finding_servers">Finding your Plex servers…</string>
+    <string name="plex_choose_server">Choose a server</string>
+    <string name="plex_no_servers">No reachable Plex Media Server was found on this account. Your watchlist will still show on Home.</string>
+    <string name="plex_expired">The code expired before it was entered.</string>
+    <string name="plex_error">Couldn\'t reach Plex. Check the TV\'s internet connection.</string>
+    <string name="action_retry">Try again</string>
+    <string name="action_done">Done</string>
+
+    <string name="detail_play">Play</string>
+    <string name="detail_resume">Resume from %1$s</string>
+    <string name="detail_play_from_start">Play from beginning</string>
+    <string name="detail_mark_watched">Mark as watched</string>
+    <string name="detail_mark_unwatched">Mark as unwatched</string>
+    <string name="detail_add_watchlist">Add to watchlist</string>
+    <string name="detail_remove_watchlist">Remove from watchlist</string>
+    <string name="detail_not_in_library">Not in your Plex libraries</string>
+    <string name="detail_starring">Starring %1$s</string>
+    <string name="detail_seasons">Seasons</string>
+    <string name="detail_episodes">Episodes</string>
+    <string name="detail_loading">Loading…</string>
+    <string name="duration_hours_minutes">%1$d h %2$d min</string>
+    <string name="duration_minutes">%1$d min</string>
+
+    <string name="player_error">This video couldn\'t be played.</string>
+
+    <string name="profiles_who">Who\'s watching?</string>
+    <string name="profiles_section">Profiles</string>
+    <string name="profiles_add">Add profile</string>
+    <string name="profiles_new_name">Profile %1$d</string>
+    <string name="profiles_ask_on_start">Ask who\'s watching on start</string>
+    <string name="profiles_switch">Switch profile</string>
+    <string name="profile_edit_title">Edit %1$s</string>
+    <string name="profile_name">Name</string>
+    <string name="profile_pin">PIN</string>
+    <string name="profile_pin_none">No PIN</string>
+    <string name="profile_pin_set">PIN set</string>
+    <string name="profile_pin_remove">Remove PIN</string>
+    <string name="profile_restricted">Restricted (for kids)</string>
+    <string name="profile_restricted_hint">Can\'t change settings without the Main profile\'s PIN.</string>
+    <string name="profile_restricted_needs_main_pin">Set a PIN on the Main profile first, or restrictions can be bypassed.</string>
+    <string name="profile_rating">Plex content allowed</string>
+    <string name="profile_apps">Apps this profile can see</string>
+    <string name="profile_apps_hint">%1$d of %2$d apps hidden</string>
+    <string name="profile_delete">Delete profile</string>
+    <string name="profile_summary_restricted">Restricted · %1$s</string>
+    <string name="profile_summary_open">No restrictions</string>
+    <string name="rating_little_kids">Little kids (G, TV-Y, TV-G)</string>
+    <string name="rating_older_kids">Older kids (up to PG, TV-PG)</string>
+    <string name="rating_teens">Teens (up to PG-13, TV-14)</string>
+    <string name="rating_everyone">Everything</string>
+    <string name="state_shown">Shown</string>
+    <string name="state_hidden">Hidden</string>
+
+    <string name="pin_enter">Enter PIN for %1$s</string>
+    <string name="pin_enter_main">Enter the Main profile\'s PIN</string>
+    <string name="pin_new">Choose a 4-digit PIN</string>
+    <string name="pin_confirm">Enter the PIN again</string>
+    <string name="pin_wrong">Wrong PIN. Try again.</string>
+    <string name="pin_mismatch">The PINs didn\'t match. Start again.</string>
+    <string name="pin_delete">Delete</string>
+    <string name="pin_cancel">Cancel</string>
+
+    <string name="premium_section">TV Theme Premium</string>
+    <string name="premium_trial">Free trial: %1$d days left</string>
+    <string name="premium_owned">Premium unlocked. Thank you!</string>
+    <string name="premium_expired">Your free trial has ended</string>
+    <string name="premium_includes">Premium includes Plex, picture wallpapers and extra profiles.</string>
+    <string name="premium_lifetime">Lifetime · %1$s</string>
+    <string name="premium_monthly">Monthly · %1$s</string>
+    <string name="premium_unavailable">Purchases aren\'t available on this TV yet.</string>
+    <string name="premium_locked">Premium</string>
+    <string name="premium_locked_hint">Unlock TV Theme Premium to use this.</string>
+
+    <string name="home_setup_title">Make TV Theme your home screen</string>
+    <string name="home_setup_card_hint">Pressing Home on your remote still opens the built-in home screen.</string>
+    <string name="home_setup_done">✓ Pressing Home opens TV Theme.</string>
+    <string name="home_setup_not_done">Pressing Home still opens the built-in home screen.</string>
+    <string name="home_setup_choose">Choose the home app</string>
+    <string name="home_setup_choose_hint">Pick TV Theme in your TV\'s home app setting.</string>
+    <string name="home_setup_helper">Home button helper</string>
+    <string name="home_setup_helper_hint">Works on Google TV and Fire TV. Turn on TV Theme in Accessibility settings.</string>
+    <string name="home_setup_helper_disclosure">TV Theme uses an Android accessibility service only to notice when you press the Home button or when the built-in home screen opens, and then shows TV Theme instead. It doesn\'t read what\'s on your screen and doesn\'t collect or share any data. You can turn it off at any time in Accessibility settings.</string>
+    <string name="home_setup_open_accessibility">Open Accessibility settings</string>
+    <string name="home_setup_adb">Use a computer (advanced)</string>
+    <string name="home_setup_adb_hint">Turns off the built-in home screen with ADB. Most reliable.</string>
+    <string name="home_setup_adb_steps">1. On the TV, turn on Developer options and Network debugging (or USB debugging).\n2. On a computer with Android platform-tools, run:</string>
+    <string name="home_setup_adb_undo">To undo later:</string>
+    <string name="home_setup_adb_no_ip">&lt;TV IP address&gt;</string>
+    <string name="home_helper_service_label">TV Theme Home button</string>
+    <string name="home_helper_service_description">Opens TV Theme when you press Home. It only watches for the Home button and for the built-in home screen opening; it doesn\'t read screen content or collect data.</string>
+
+    <string name="quick_section_status">Status</string>
+    <string name="quick_section_settings">TV settings</string>
+    <string name="quick_section_launcher">TV Theme</string>
+    <string name="quick_bluetooth_hint">Pair remotes, speakers and controllers</string>
+    <string name="quick_display_hint">Resolution, screen position, HDR</string>
+    <string name="quick_sound_hint">Sound output, surround, system sounds</string>
+    <string name="quick_screensaver_hint">When the TV goes idle</string>
+    <string name="quick_date_hint">Time zone and clock format</string>
+    <string name="quick_apps_hint">Storage, permissions, uninstall</string>
+    <string name="quick_accessibility">Accessibility</string>
+    <string name="quick_accessibility_hint">Captions, text size, Home button helper</string>
+    <string name="quick_about">About</string>
+    <string name="quick_about_hint">Device name, Android version, updates</string>
+    <string name="quick_all_hint">Open the TV\'s full Settings app</string>
+    <string name="quick_customize_hint">Wallpaper, rows, Plex, profiles</string>
+    <string name="quick_home_setup_hint">Make the Home button open TV Theme</string>
+    <string name="quick_volume_down">Volume down</string>
+    <string name="quick_volume_up">Volume up</string>
+
+    <string name="quick_title">Quick settings</string>
+    <string name="quick_volume">Volume %1$d / %2$d</string>
+    <string name="network_wifi">Connected to Wi-Fi</string>
+    <string name="network_ethernet">Connected with Ethernet</string>
+    <string name="network_other">Connected</string>
+    <string name="network_offline">Not connected</string>
+    <string name="quick_network">Network &amp; internet</string>
+    <string name="quick_bluetooth">Remotes &amp; accessories</string>
+    <string name="quick_display">Display</string>
+    <string name="quick_sound">Sound</string>
+    <string name="quick_screensaver">Screensaver</string>
+    <string name="quick_date">Date &amp; time</string>
+    <string name="quick_apps">Apps</string>
+    <string name="quick_all">All settings</string>
+</resources>
