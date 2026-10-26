@@ -96,7 +96,7 @@ See [PUBLISHING.md](PUBLISHING.md) for the Google Play steps.
 ```powershell
 $adb = "D:\MyPersonal\AndroidTools\sdk\platform-tools\adb.exe"
 & $adb connect <TV_IP>:5555
-& $adb install -r app\build\outputs\apk\debug\app-debug.apk
+& $adb install -r app\build\outputs\apk\sideload\release\app-sideload-release.apk
 ```
 
 4. Press **Home** on the remote. If the TV asks which launcher to use, choose **TV Theme**.
