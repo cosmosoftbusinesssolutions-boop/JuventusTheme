@@ -41,7 +41,8 @@ import com.cosmosoft.tvtheme.plex.PlexSession
 import com.cosmosoft.tvtheme.ui.plex.MediaDetailDialog
 import com.cosmosoft.tvtheme.ui.plex.rememberPlexHome
 import com.cosmosoft.tvtheme.ui.theme.LauncherThemeProvider
-import com.cosmosoft.tvtheme.ui.theme.LauncherThemes
+import com.cosmosoft.tvtheme.ui.theme.BianconeriPresetIndex
+import com.cosmosoft.tvtheme.ui.theme.BianconeriTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -65,7 +66,7 @@ fun LauncherApp(profiles: ProfileStore, premium: Premium, plex: PlexSession, app
     // Coming back to the launcher (appsVersion bumps on resume) also refreshes Plex rows.
     val plexHome = rememberPlexHome(plex, refreshKey = appsVersion)?.takeIf { premiumOn }?.allowedFor(profile)
     var openMedia by remember { mutableStateOf<PlexItem?>(null) }
-    val wallpaperChoice = settings.wallpaper.takeIf { premiumOn || it is WallpaperChoice.Preset } ?: WallpaperChoice.Preset(0)
+    val wallpaperChoice = settings.wallpaper.takeIf { premiumOn || it is WallpaperChoice.Preset } ?: WallpaperChoice.Preset(BianconeriPresetIndex)
     val wallpaper by produceState<LoadedWallpaper?>(initialValue = null, wallpaperChoice) {
         value = withContext(Dispatchers.IO) { Wallpapers.load(context, wallpaperChoice) }
     }
@@ -95,7 +96,7 @@ fun LauncherApp(profiles: ProfileStore, premium: Premium, plex: PlexSession, app
     // A launcher is the bottom of the back stack: Back returns to Home but never closes it.
     BackHandler { destination = Destination.Home }
 
-    LauncherThemeProvider(wallpaper?.theme ?: LauncherThemes.first()) {
+    LauncherThemeProvider(wallpaper?.theme ?: BianconeriTheme) {
         Box(Modifier.fillMaxSize()) {
             WallpaperBackground(wallpaper)
 
@@ -226,7 +227,7 @@ private fun WallpaperBackground(wallpaper: LoadedWallpaper?) {
                 )
             }
         } else {
-            val colors = (current?.theme ?: LauncherThemes.first()).background
+            val colors = (current?.theme ?: BianconeriTheme).background
             Box(
                 Modifier
                     .fillMaxSize()

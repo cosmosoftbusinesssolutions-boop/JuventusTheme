@@ -24,6 +24,7 @@ import androidx.compose.ui.focus.FocusRequester
 import kotlinx.coroutines.delay
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Border
@@ -94,6 +95,7 @@ internal fun SectionTitle(text: String, modifier: Modifier = Modifier) {
     Text(
         text = text,
         style = MaterialTheme.typography.titleLarge,
+        fontWeight = FontWeight.SemiBold,
         color = LocalLauncherTheme.current.text,
         modifier = modifier,
     )

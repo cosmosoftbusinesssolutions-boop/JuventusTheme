@@ -41,7 +41,8 @@ class LauncherSettings(context: Context, profileId: String = Profile.MAIN_ID) {
     private var wallpaperState = mutableStateOf(
         WallpaperChoice.parse(prefs.getString(KEY_WALLPAPER, null))
             // Before wallpapers existed, only a color theme index was stored.
-            ?: WallpaperChoice.Preset(prefs.getInt(KEY_LEGACY_THEME, 0)),
+            ?: prefs.getInt(KEY_LEGACY_THEME, -1).takeIf { it >= 0 }?.let { WallpaperChoice.Preset(it) }
+            ?: DefaultWallpaper,
     )
     var wallpaper: WallpaperChoice
         get() = wallpaperState.value

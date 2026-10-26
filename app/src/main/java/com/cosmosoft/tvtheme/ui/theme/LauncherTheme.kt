@@ -16,6 +16,16 @@ data class LauncherTheme(
     val text: Color,
 )
 
+/** Black and white with gold highlights: the default look. */
+val BianconeriTheme = LauncherTheme(
+    name = "Bianconeri",
+    background = listOf(Color(0xFF000000), Color(0xFF111111), Color(0xFF1E1E1E)),
+    accent = Color(0xFFD4AF37),
+    card = Color(0xFF1C1C1C),
+    text = Color(0xFFFFFFFF),
+)
+
+// Saved choices refer to presets by position, so add new ones at the end.
 val LauncherThemes = listOf(
     LauncherTheme(
         name = "Aurora",
@@ -45,9 +55,12 @@ val LauncherThemes = listOf(
         card = Color(0xFF222222),
         text = Color(0xFFFFFFFF),
     ),
+    BianconeriTheme,
 )
 
-val LocalLauncherTheme = staticCompositionLocalOf { LauncherThemes.first() }
+val BianconeriPresetIndex = LauncherThemes.indexOf(BianconeriTheme)
+
+val LocalLauncherTheme = staticCompositionLocalOf { BianconeriTheme }
 
 @Composable
 fun LauncherThemeProvider(theme: LauncherTheme, content: @Composable () -> Unit) {

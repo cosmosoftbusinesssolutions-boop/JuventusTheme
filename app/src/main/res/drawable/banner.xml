@@ -1,22 +1,22 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="320dp"
     android:height="180dp"
     android:viewportWidth="320"
     android:viewportHeight="180">
-    <path android:pathData="M0,0h320v180h-320z">
-        <aapt:attr name="android:fillColor">
-            <gradient
-                android:type="linear"
-                android:startX="0"
-                android:startY="0"
-                android:endX="320"
-                android:endY="180">
-                <item android:offset="0" android:color="#FF1B1F3B" />
-                <item android:offset="1" android:color="#FF7C5CFF" />
-            </gradient>
-        </aapt:attr>
-    </path>
-    <path android:fillColor="#00D1FF" android:pathData="M40,60h70a6,6 0,0 1,6 6v40a6,6 0,0 1,-6 6h-70a6,6 0,0 1,-6 -6v-40a6,6 0,0 1,6 -6z" />
-    <path android:fillColor="#FFFFFF" android:fillAlpha="0.85" android:pathData="M135,78h145v10h-145z M135,96h100v8h-100z" />
+    <path android:fillColor="#000000" android:pathData="M0,0h320v180h-320z" />
+    <!-- Striped badge on the left. -->
+    <group>
+        <clip-path android:pathData="M40,30h70a10,10 0,0 1,10 10v100a10,10 0,0 1,-10 10h-70a10,10 0,0 1,-10 -10v-100a10,10 0,0 1,10 -10z" />
+        <path android:fillColor="#111111" android:pathData="M30,30h90v120h-90z" />
+        <path android:fillColor="#F4F4F4" android:pathData="M43,30h13v120h-13z M69,30h13v120h-13z M95,30h13v120h-13z" />
+    </group>
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#D4AF37"
+        android:strokeWidth="3"
+        android:pathData="M40,30h70a10,10 0,0 1,10 10v100a10,10 0,0 1,-10 10h-70a10,10 0,0 1,-10 -10v-100a10,10 0,0 1,10 -10z" />
+    <!-- Title bars: white name, gold underline. -->
+    <path android:fillColor="#FFFFFF" android:pathData="M140,72h146v14h-146z" />
+    <path android:fillColor="#FFFFFF" android:fillAlpha="0.6" android:pathData="M140,96h104v8h-104z" />
+    <path android:fillColor="#D4AF37" android:pathData="M140,116h48v4h-48z" />
 </vector>

@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
+import android.graphics.LinearGradient
 import android.graphics.Paint
 import android.graphics.RadialGradient
 import android.graphics.Shader
@@ -15,6 +16,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.graphics.ColorUtils
 import androidx.palette.graphics.Palette
+import com.cosmosoft.tvtheme.ui.theme.BianconeriTheme
 import com.cosmosoft.tvtheme.ui.theme.LauncherTheme
 import com.cosmosoft.tvtheme.ui.theme.LauncherThemes
 import java.io.File
@@ -50,32 +52,74 @@ sealed interface WallpaperChoice {
     }
 }
 
-/** A wallpaper drawn in code from soft color glows, so the APK ships no image files. */
+/** A wallpaper drawn in code, so the APK ships no image files. */
 class BuiltinWallpaper(
     val id: String,
     val name: String,
-    private val base: Int,
-    /** Each glow is (x, y, radius) as fractions of the width, plus a color. */
-    private val glows: List<Pair<Triple<Float, Float, Float>, Int>>,
+    /** Colors to use with this wallpaper; null means derive them from the picture. */
+    val theme: LauncherTheme? = null,
+    private val paint: (Canvas, Int, Int) -> Unit,
 ) {
+    constructor(
+        id: String,
+        name: String,
+        base: Int,
+        /** Each glow is (x, y, radius) as fractions of the width, plus a color. */
+        glows: List<Pair<Triple<Float, Float, Float>, Int>>,
+    ) : this(id, name, null, { canvas, width, height -> drawGlows(canvas, width, height, base, glows) })
+
     fun render(width: Int, height: Int): Bitmap {
         val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        canvas.drawColor(base)
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        for ((position, color) in glows) {
-            val (x, y, radius) = position
-            paint.shader = RadialGradient(
-                x * width, y * height, radius * width,
-                color, color and 0x00FFFFFF, Shader.TileMode.CLAMP,
-            )
-            canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paint)
-        }
+        paint(Canvas(bitmap), width, height)
         return bitmap
     }
 }
 
+private fun drawGlows(canvas: Canvas, width: Int, height: Int, base: Int, glows: List<Pair<Triple<Float, Float, Float>, Int>>) {
+    canvas.drawColor(base)
+    val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    for ((position, color) in glows) {
+        val (x, y, radius) = position
+        paint.shader = RadialGradient(
+            x * width, y * height, radius * width,
+            color, color and 0x00FFFFFF, Shader.TileMode.CLAMP,
+        )
+        canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paint)
+    }
+}
+
+/**
+ * Black-and-white vertical stripes, fading to black on the left where the text and cards sit,
+ * with a warm gold glow in the bottom corner.
+ */
+private fun drawStripes(canvas: Canvas, width: Int, height: Int) {
+    val w = width.toFloat()
+    val h = height.toFloat()
+    canvas.drawColor(AndroidColor.BLACK)
+    val stripe = w / 12
+    val white = Paint().apply { color = 0xFFF4F4F4.toInt() }
+    for (i in 1 until 12 step 2) canvas.drawRect(i * stripe, 0f, (i + 1) * stripe, h, white)
+
+    val fade = Paint().apply {
+        shader = LinearGradient(
+            0f, 0f, w, 0f,
+            intArrayOf(0xF5000000.toInt(), 0xCC000000.toInt(), 0x40000000),
+            floatArrayOf(0f, 0.5f, 1f),
+            Shader.TileMode.CLAMP,
+        )
+    }
+    canvas.drawRect(0f, 0f, w, h, fade)
+    val gold = Paint().apply {
+        shader = RadialGradient(w * 0.95f, h, w * 0.4f, 0x80D4AF37.toInt(), 0x00D4AF37, Shader.TileMode.CLAMP)
+    }
+    canvas.drawRect(0f, 0f, w, h, gold)
+}
+
+/** Shown on first launch, and used whenever picture wallpapers aren't available. */
+val DefaultWallpaper = WallpaperChoice.Builtin("bianconeri")
+
 val BuiltinWallpapers = listOf(
+    BuiltinWallpaper(id = "bianconeri", name = "Bianconeri", theme = BianconeriTheme, paint = ::drawStripes),
     BuiltinWallpaper(
         id = "nebula", name = "Nebula", base = 0xFF0A0820.toInt(),
         glows = listOf(
@@ -111,12 +155,13 @@ object Wallpapers {
 
     /** Must be called off the main thread. */
     fun load(context: Context, choice: WallpaperChoice): LoadedWallpaper {
-        val fallback = LoadedWallpaper(null, LauncherThemes.first())
+        val fallback = LoadedWallpaper(null, BianconeriTheme)
         return when (choice) {
             is WallpaperChoice.Preset -> LoadedWallpaper(null, LauncherThemes[choice.index])
             is WallpaperChoice.Builtin -> {
                 val wallpaper = BuiltinWallpapers.firstOrNull { it.id == choice.id } ?: return fallback
-                fromBitmap(wallpaper.render(WIDTH, HEIGHT), wallpaper.name)
+                val bitmap = wallpaper.render(WIDTH, HEIGHT)
+                wallpaper.theme?.let { LoadedWallpaper(bitmap.asImageBitmap(), it) } ?: fromBitmap(bitmap, wallpaper.name)
             }
             is WallpaperChoice.Custom -> {
                 val bitmap = BitmapFactory.decodeFile(customFile(context).path) ?: return fallback

@@ -46,6 +46,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import com.cosmosoft.tvtheme.ui.requestFocusWhenReady
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -71,21 +72,24 @@ import com.cosmosoft.tvtheme.ui.SafeVertical
 import com.cosmosoft.tvtheme.ui.SectionTitle
 import com.cosmosoft.tvtheme.ui.theme.LocalLauncherTheme
 
+/** Gold, white, silver and charcoal first, to match the black-and-white look. */
 val AvatarColors = listOf(
-    Color(0xFF7C5CFF), Color(0xFF00B8D9), Color(0xFFFF7043), Color(0xFF43A047), Color(0xFFEC407A), Color(0xFFFFB300),
+    Color(0xFFD4AF37), Color(0xFFF4F4F4), Color(0xFF9E9E9E), Color(0xFF2E2E2E), Color(0xFF8C6D1F), Color(0xFF5A5A5A),
 )
 
 @Composable
 fun Avatar(profile: Profile, size: Dp, modifier: Modifier = Modifier) {
+    val color = AvatarColors[profile.colorIndex % AvatarColors.size]
     Box(
         modifier
             .size(size)
-            .background(AvatarColors[profile.colorIndex % AvatarColors.size], CircleShape),
+            .background(color, CircleShape)
+            .border(BorderStroke(1.dp, Color.White.copy(alpha = 0.25f)), CircleShape),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             text = profile.name.take(1).uppercase(),
-            color = Color.White,
+            color = if (color.luminance() > 0.4f) Color.Black else Color.White,
             fontSize = (size.value * 0.45f).sp,
             fontWeight = FontWeight.Bold,
         )
@@ -179,10 +183,13 @@ private fun ProfileTile(profile: Profile, modifier: Modifier, onClick: () -> Uni
             colors = ClickableSurfaceDefaults.colors(containerColor = Color.Transparent, focusedContainerColor = Color.Transparent),
             scale = ClickableSurfaceDefaults.scale(focusedScale = 1.12f),
         ) {
+            // The ring sits outside the avatar with a gap, so it stays visible on gold or white avatars.
             Avatar(
                 profile,
                 120.dp,
-                Modifier.border(BorderStroke(4.dp, if (focused) theme.accent else Color.Transparent), CircleShape),
+                Modifier
+                    .border(BorderStroke(4.dp, if (focused) theme.accent else Color.Transparent), CircleShape)
+                    .padding(8.dp),
             )
         }
         Spacer(Modifier.height(16.dp))
