@@ -24,7 +24,13 @@ import com.cosmosoft.tvtheme.ui.theme.LocalLauncherTheme
 
 /** Every launchable app (except hidden ones) in a grid, A to Z. */
 @Composable
-fun AppsScreen(apps: List<LaunchableApp>?, settings: LauncherSettings, onAppOptions: (LaunchableApp) -> Unit) {
+fun AppsScreen(
+    apps: List<LaunchableApp>?,
+    settings: LauncherSettings,
+    /** Bumps when the focused card disappeared (an app was hidden) and focus should return to the grid. */
+    refocusKey: Int,
+    onAppOptions: (LaunchableApp) -> Unit,
+) {
     val theme = LocalLauncherTheme.current
     val visible = apps.orEmpty().filter { it.key !in settings.hidden }
     val firstCardFocus = remember { FocusRequester() }
@@ -50,7 +56,7 @@ fun AppsScreen(apps: List<LaunchableApp>?, settings: LauncherSettings, onAppOpti
         }
     }
 
-    LaunchedEffect(visible.isNotEmpty()) {
-        if (visible.isNotEmpty()) runCatching { firstCardFocus.requestFocus() }
+    LaunchedEffect(visible.isNotEmpty(), refocusKey) {
+        if (visible.isNotEmpty()) firstCardFocus.requestFocusWhenReady()
     }
 }

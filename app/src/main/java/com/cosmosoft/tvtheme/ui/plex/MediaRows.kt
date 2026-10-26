@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Border
 import androidx.tv.material3.Card
 import androidx.tv.material3.CardDefaults
+import androidx.tv.material3.Glow
 import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
@@ -39,6 +40,7 @@ import com.cosmosoft.tvtheme.plex.PlexSession
 import com.cosmosoft.tvtheme.ui.CardHeight
 import com.cosmosoft.tvtheme.ui.CardShape
 import com.cosmosoft.tvtheme.ui.CardWidth
+import com.cosmosoft.tvtheme.ui.LabelShadow
 import com.cosmosoft.tvtheme.ui.theme.LocalLauncherTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -118,6 +120,7 @@ fun MediaCard(
             border = CardDefaults.border(
                 focusedBorder = Border(border = BorderStroke(3.dp, theme.accent), shape = CardShape),
             ),
+            glow = CardDefaults.glow(focusedGlow = Glow(elevationColor = theme.accent.copy(alpha = 0.55f), elevation = 14.dp)),
         ) {
             Box(Modifier.fillMaxSize()) {
                 // Title underneath shows until (or if) the artwork loads.
@@ -170,7 +173,7 @@ fun MediaCard(
         Spacer(Modifier.height(8.dp))
         Text(
             text = if (showHeading) item.heading else item.title,
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.bodyMedium.copy(shadow = LabelShadow),
             color = theme.text.copy(alpha = 0.9f),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,

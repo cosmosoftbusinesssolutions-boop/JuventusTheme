@@ -1,12 +1,16 @@
 package com.cosmosoft.tvtheme.ui
 
 import android.text.format.DateFormat
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -59,6 +63,8 @@ fun HomeScreen(
     plexHome: PlexHome?,
     /** Pressing Home still opens the TV's built-in launcher, so offer the setup guide. */
     needsSetup: Boolean,
+    /** Bumps when the focused card disappeared (an app was hidden) and focus should return to the rows. */
+    refocusKey: Int,
     onAppOptions: (LaunchableApp) -> Unit,
     onOpenMedia: (PlexItem) -> Unit,
     onSetup: () -> Unit,
@@ -117,7 +123,8 @@ fun HomeScreen(
                     SectionTitle(stringResource(R.string.row_favorites))
                     Text(
                         text = stringResource(R.string.favorites_hint),
-                        color = theme.text.copy(alpha = 0.7f),
+                        style = MaterialTheme.typography.bodyLarge.copy(shadow = LabelShadow),
+                        color = theme.text.copy(alpha = 0.75f),
                     )
                 }
             }
@@ -140,8 +147,8 @@ fun HomeScreen(
         }
     }
 
-    LaunchedEffect(rows.isNotEmpty()) {
-        if (rows.isNotEmpty()) runCatching { firstCardFocus.requestFocus() }
+    LaunchedEffect(rows.isNotEmpty(), refocusKey) {
+        if (rows.isNotEmpty()) firstCardFocus.requestFocusWhenReady()
     }
 }
 
@@ -163,14 +170,22 @@ private fun Clock() {
     Column(Modifier.padding(start = ContentStart)) {
         Text(
             text = timeFormat.format(now),
-            style = MaterialTheme.typography.displayMedium,
+            style = MaterialTheme.typography.displayMedium.copy(shadow = LabelShadow),
             fontWeight = FontWeight.Light,
             color = theme.text,
         )
         Text(
             text = dateFormat.format(now),
-            style = MaterialTheme.typography.titleMedium,
-            color = theme.text.copy(alpha = 0.7f),
+            style = MaterialTheme.typography.titleMedium.copy(shadow = LabelShadow),
+            color = theme.text.copy(alpha = 0.75f),
+        )
+        Spacer(Modifier.height(12.dp))
+        // Short accent bar under the date, in the theme's highlight color.
+        Box(
+            Modifier
+                .width(56.dp)
+                .height(4.dp)
+                .background(theme.accent, RoundedCornerShape(2.dp)),
         )
     }
 }

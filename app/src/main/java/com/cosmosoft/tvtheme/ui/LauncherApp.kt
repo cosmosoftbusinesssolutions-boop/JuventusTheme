@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -56,8 +57,9 @@ import kotlinx.coroutines.withContext
 fun LauncherApp(profiles: ProfileStore, premium: Premium, plex: PlexSession, appsVersion: Int, homeSignal: Int) {
     val context = LocalContext.current
     val premiumOn = premium.isUnlocked
-    // Extra profiles are a Premium feature; without it everyone uses the main profile.
-    val profile = if (premiumOn) profiles.current else profiles.main
+    // Profiles keep working after the trial (only adding new ones is Premium), so a kids
+    // profile never silently loses its restrictions.
+    val profile = profiles.current
     val settings = remember(profile.id) { LauncherSettings(context, profile.id) }
 
     val apps by produceState<List<LaunchableApp>?>(initialValue = null, appsVersion) {
@@ -68,31 +70,42 @@ fun LauncherApp(profiles: ProfileStore, premium: Premium, plex: PlexSession, app
     var openMedia by remember { mutableStateOf<PlexItem?>(null) }
     val wallpaperChoice = settings.wallpaper.takeIf { premiumOn || it is WallpaperChoice.Preset } ?: WallpaperChoice.Preset(BianconeriPresetIndex)
     val wallpaper by produceState<LoadedWallpaper?>(initialValue = null, wallpaperChoice) {
-        value = withContext(Dispatchers.IO) { Wallpapers.load(context, wallpaperChoice) }
+        value = withContext(Dispatchers.IO) { Wallpapers.load(context, wallpaperChoice, profile.id) }
     }
 
     var destination by rememberSaveable { mutableStateOf(Destination.Home) }
     var quickSettingsOpen by remember { mutableStateOf(false) }
     var optionsFor by remember { mutableStateOf<LaunchableApp?>(null) }
     var setupOpen by remember { mutableStateOf(false) }
-    var picking by rememberSaveable { mutableStateOf(premiumOn && profiles.askOnStart && profiles.profiles.size > 1) }
+    var picker by rememberSaveable {
+        mutableStateOf(if (profiles.askOnStart && profiles.profiles.size > 1) PickerMode.Startup else null)
+    }
     val needsSetup = remember(appsVersion) { HomeSetup.needsSetup(context) }
     val quickSettingsFocus = remember { FocusRequester() }
+    // Bumped after an app is hidden, so focus goes back to the first card instead of the side menu.
+    var refocusCards by remember { mutableIntStateOf(0) }
 
-    // Restricted profiles need the main profile's PIN once per session to reach settings.
+    // Restricted profiles need the main profile's PIN to reach settings.
     var settingsUnlocked by remember(profile.id) { mutableStateOf(!profile.restricted) }
     var pendingAfterPin by remember { mutableStateOf<(() -> Unit)?>(null) }
     fun guarded(action: () -> Unit) {
         if (settingsUnlocked || !profiles.main.hasPin) action() else pendingAfterPin = action
     }
 
-    // Pressing Home on the remote always brings you back to the Home screen.
+    // Pressing Home on the remote always brings you back to the Home screen, and locks
+    // settings again in a restricted profile.
     LaunchedEffect(homeSignal) {
         destination = Destination.Home
         quickSettingsOpen = false
         openMedia = null
+        setupOpen = false
+        settingsUnlocked = !profile.restricted
     }
-    LaunchedEffect(profile.id) { destination = Destination.Home }
+    // After switching profile, land on that profile's Home with focus on its first app.
+    LaunchedEffect(profile.id) {
+        destination = Destination.Home
+        refocusCards++
+    }
     // A launcher is the bottom of the back stack: Back returns to Home but never closes it.
     BackHandler { destination = Destination.Home }
 
@@ -109,11 +122,13 @@ fun LauncherApp(profiles: ProfileStore, premium: Premium, plex: PlexSession, app
                         plex = plex,
                         plexHome = plexHome,
                         needsSetup = needsSetup,
+                        refocusKey = refocusCards,
                         onAppOptions = showOptions,
                         onOpenMedia = { openMedia = it },
-                        onSetup = { setupOpen = true },
+                        // The setup guide opens system settings, so it's PIN-guarded too.
+                        onSetup = { guarded { setupOpen = true } },
                     )
-                    Destination.Apps -> AppsScreen(apps, settings, showOptions)
+                    Destination.Apps -> AppsScreen(apps, settings, refocusCards, showOptions)
                     Destination.Customize -> CustomizeScreen(
                         apps = apps,
                         settings = settings,
@@ -128,12 +143,12 @@ fun LauncherApp(profiles: ProfileStore, premium: Premium, plex: PlexSession, app
 
             NavRail(
                 selected = destination,
-                profile = profile.takeIf { premiumOn && profiles.profiles.size > 1 },
+                profile = profile.takeIf { profiles.profiles.size > 1 },
                 onNavigate = { target ->
                     if (target == Destination.Customize) guarded { destination = target } else destination = target
                 },
                 onQuickSettings = { guarded { quickSettingsOpen = true } },
-                onSwitchProfile = { picking = true },
+                onSwitchProfile = { picker = PickerMode.Switch },
                 quickSettingsFocus = quickSettingsFocus,
             )
 
@@ -155,7 +170,13 @@ fun LauncherApp(profiles: ProfileStore, premium: Premium, plex: PlexSession, app
                 )
             }
             optionsFor?.let { app ->
-                AppOptionsDialog(app, settings, restricted = !settingsUnlocked, onDismiss = { optionsFor = null })
+                AppOptionsDialog(
+                    app = app,
+                    settings = settings,
+                    restricted = !settingsUnlocked,
+                    onHidden = { refocusCards++ },
+                    onDismiss = { optionsFor = null },
+                )
             }
             openMedia?.let { item ->
                 MediaDetailDialog(item, plex, refreshKey = appsVersion, onDismiss = { openMedia = null })
@@ -163,8 +184,13 @@ fun LauncherApp(profiles: ProfileStore, premium: Premium, plex: PlexSession, app
             if (setupOpen) {
                 HomeSetupDialog(refreshKey = appsVersion, onDismiss = { setupOpen = false })
             }
-            if (picking) {
-                ProfilePicker(profiles, onPicked = { picking = false }, onDismiss = { picking = false })
+            picker?.let { mode ->
+                ProfilePicker(
+                    store = profiles,
+                    onPicked = { picker = null },
+                    // At startup Back must not skip the picker, or it would bypass the last profile's PIN.
+                    onDismiss = if (mode == PickerMode.Switch) ({ picker = null }) else null,
+                )
             }
             pendingAfterPin?.let { action ->
                 val wrong = stringResource(R.string.pin_wrong)
@@ -186,6 +212,8 @@ fun LauncherApp(profiles: ProfileStore, premium: Premium, plex: PlexSession, app
         }
     }
 }
+
+private enum class PickerMode { Startup, Switch }
 
 /** Drops Plex titles above a restricted profile's rating limit. */
 private fun PlexHome.allowedFor(profile: Profile): PlexHome {

@@ -95,6 +95,7 @@ class ProfileStore(private val context: Context) {
         if (currentId == id) select(Profile.MAIN_ID)
         save(profiles.filterNot { it.id == id })
         context.deleteSharedPreferences(LauncherSettings.prefsName(id))
+        Wallpapers.customFile(context, id).delete()
     }
 
     /** Sets or (with null) removes a profile's 4-digit PIN. */

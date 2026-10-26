@@ -37,7 +37,13 @@ import com.cosmosoft.tvtheme.ui.theme.LocalLauncherTheme
  * In a [restricted] profile (until the main PIN is entered) only Open is offered.
  */
 @Composable
-fun AppOptionsDialog(app: LaunchableApp, settings: LauncherSettings, restricted: Boolean, onDismiss: () -> Unit) {
+fun AppOptionsDialog(
+    app: LaunchableApp,
+    settings: LauncherSettings,
+    restricted: Boolean,
+    onHidden: () -> Unit,
+    onDismiss: () -> Unit,
+) {
     val theme = LocalLauncherTheme.current
     val context = LocalContext.current
     val firstOption = remember { FocusRequester() }
@@ -88,7 +94,10 @@ fun AppOptionsDialog(app: LaunchableApp, settings: LauncherSettings, restricted:
                 }
                 ListRow(
                     title = stringResource(R.string.options_hide),
-                    onClick = option { settings.setHidden(app.key, true) },
+                    onClick = option {
+                        settings.setHidden(app.key, true)
+                        onHidden()
+                    },
                 )
                 ListRow(
                     title = stringResource(R.string.options_app_info),

@@ -110,6 +110,11 @@ fun CustomizeScreen(
     var pickingPicture by remember { mutableStateOf(false) }
     var plexDialog by remember { mutableStateOf<PlexDialog?>(null) }
     var editingProfile by remember { mutableStateOf<String?>(null) }
+    var confirmSignOut by remember { mutableStateOf(false) }
+    // Focus goes back to the profile row that was edited (or Add profile, if it was deleted).
+    val profileFocus = remember { mutableMapOf<String, FocusRequester>() }
+    val addProfileFocus = remember { FocusRequester() }
+    var refocusProfile by remember { mutableStateOf<String?>(null) }
     val unlocked = premium.isUnlocked
     val showLocked = { Toast.makeText(context, R.string.premium_locked_hint, Toast.LENGTH_SHORT).show() }
     val firstFocus = remember { FocusRequester() }
@@ -135,10 +140,8 @@ fun CustomizeScreen(
         contentPadding = PaddingValues(vertical = SafeVertical),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        item { PremiumSection(premium, inset) }
-
         item {
-            Column(inset.padding(top = 16.dp)) {
+            Column(inset) {
                 SectionTitle(stringResource(R.string.customize_wallpaper))
                 Text(stringResource(R.string.customize_wallpaper_hint), color = theme.text.copy(alpha = 0.7f))
             }
@@ -198,16 +201,14 @@ fun CustomizeScreen(
                 ListRow(
                     title = stringResource(R.string.plex_sign_out),
                     subtitle = plex.accountName ?: stringResource(R.string.plex_signed_in),
-                    onClick = { plex.signOut() },
+                    onClick = { confirmSignOut = true },
                     modifier = inset,
                 )
             }
         }
 
         item { SectionTitle(stringResource(R.string.profiles_section), inset.padding(top = 16.dp)) }
-        if (!unlocked) {
-            item { LockedRow(stringResource(R.string.profiles_add), inset) }
-        } else if (profiles.current.isMain) {
+        if (profiles.current.isMain) {
             // Only the main profile manages profiles.
             items(profiles.profiles, key = { "profile:${it.id}" }) { profile ->
                 ListRow(
@@ -218,18 +219,23 @@ fun CustomizeScreen(
                         stringResource(R.string.profile_summary_open)
                     },
                     onClick = { editingProfile = profile.id },
-                    modifier = inset,
+                    modifier = inset.focusRequester(profileFocus.getOrPut(profile.id) { FocusRequester() }),
                 ) {
                     Avatar(profile, 36.dp)
                 }
             }
             item {
-                val newName = stringResource(R.string.profiles_new_name, profiles.profiles.size + 1)
-                ListRow(
-                    title = stringResource(R.string.profiles_add),
-                    onClick = { editingProfile = profiles.add(newName).id },
-                    modifier = inset,
-                )
+                // Existing profiles keep working after the trial; only adding more is Premium.
+                if (unlocked) {
+                    val newName = stringResource(R.string.profiles_new_name, profiles.profiles.size + 1)
+                    ListRow(
+                        title = stringResource(R.string.profiles_add),
+                        onClick = { editingProfile = profiles.add(newName).id },
+                        modifier = inset.focusRequester(addProfileFocus),
+                    )
+                } else {
+                    LockedRow(stringResource(R.string.profiles_add), inset.focusRequester(addProfileFocus))
+                }
             }
             if (profiles.profiles.size > 1) {
                 item {
@@ -254,6 +260,8 @@ fun CustomizeScreen(
             )
         }
 
+        item { PremiumSection(premium, inset.padding(top = 16.dp)) }
+
         item { SectionTitle(stringResource(R.string.customize_default_home), inset.padding(top = 16.dp)) }
         item {
             ListRow(
@@ -272,7 +280,28 @@ fun CustomizeScreen(
     }
 
     editingProfile?.let { id ->
-        ProfileEditorDialog(profiles, id, apps, onDismiss = { editingProfile = null })
+        ProfileEditorDialog(profiles, id, apps, onDismiss = {
+            editingProfile = null
+            refocusProfile = id
+        })
+    }
+    LaunchedEffect(refocusProfile) {
+        val id = refocusProfile ?: return@LaunchedEffect
+        val target = profileFocus[id]?.takeIf { profiles.profiles.any { it.id == id } } ?: addProfileFocus
+        target.requestFocusWhenReady()
+        refocusProfile = null
+    }
+    if (confirmSignOut) {
+        ConfirmDialog(
+            title = stringResource(R.string.confirm_sign_out_title),
+            message = stringResource(R.string.confirm_sign_out_message),
+            confirmLabel = stringResource(R.string.action_sign_out),
+            onConfirm = {
+                confirmSignOut = false
+                plex.signOut()
+            },
+            onDismiss = { confirmSignOut = false },
+        )
     }
 
     if (pickingPicture) {
@@ -281,7 +310,7 @@ fun CustomizeScreen(
             onPicked = { uri ->
                 pickingPicture = false
                 scope.launch {
-                    val saved = withContext(Dispatchers.IO) { Wallpapers.saveCustom(context, uri) }
+                    val saved = withContext(Dispatchers.IO) { Wallpapers.saveCustom(context, uri, settings.profileId) }
                     if (saved) {
                         settings.wallpaper = WallpaperChoice.Custom(System.currentTimeMillis())
                     } else {
@@ -313,7 +342,7 @@ private fun WallpaperPicker(
         item(key = "custom") {
             val thumbnail by produceState<ImageBitmap?>(null, current) {
                 value = withContext(Dispatchers.IO) {
-                    Wallpapers.decodeFileSampled(Wallpapers.customFile(context), 320, 180)?.asImageBitmap()
+                    Wallpapers.decodeFileSampled(Wallpapers.customFile(context, settings.profileId), 320, 180)?.asImageBitmap()
                 }
             }
             WallpaperOption(
@@ -512,7 +541,7 @@ private fun PremiumSection(premium: Premium, modifier: Modifier) {
                 premium.lifetime?.let { it to R.string.premium_lifetime },
                 premium.monthly?.let { it to R.string.premium_monthly },
             )
-            if (products.isEmpty()) {
+            if (products.isEmpty() && !premium.isUnlocked) {
                 Text(stringResource(R.string.premium_unavailable), color = theme.text.copy(alpha = 0.7f))
             }
             products.forEach { (product, label) ->

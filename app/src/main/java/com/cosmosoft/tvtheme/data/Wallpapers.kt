@@ -154,7 +154,7 @@ object Wallpapers {
     private const val HEIGHT = 1080
 
     /** Must be called off the main thread. */
-    fun load(context: Context, choice: WallpaperChoice): LoadedWallpaper {
+    fun load(context: Context, choice: WallpaperChoice, profileId: String): LoadedWallpaper {
         val fallback = LoadedWallpaper(null, BianconeriTheme)
         return when (choice) {
             is WallpaperChoice.Preset -> LoadedWallpaper(null, LauncherThemes[choice.index])
@@ -164,18 +164,20 @@ object Wallpapers {
                 wallpaper.theme?.let { LoadedWallpaper(bitmap.asImageBitmap(), it) } ?: fromBitmap(bitmap, wallpaper.name)
             }
             is WallpaperChoice.Custom -> {
-                val bitmap = BitmapFactory.decodeFile(customFile(context).path) ?: return fallback
+                val bitmap = BitmapFactory.decodeFile(customFile(context, profileId).path) ?: return fallback
                 fromBitmap(bitmap, "Your picture")
             }
         }
     }
 
-    fun customFile(context: Context) = File(context.filesDir, "wallpaper.jpg")
+    /** Each profile has its own picture; the main profile keeps the original file name. */
+    fun customFile(context: Context, profileId: String) =
+        File(context.filesDir, if (profileId == Profile.MAIN_ID) "wallpaper.jpg" else "wallpaper_$profileId.jpg")
 
     /** Copies a picture into app storage, scaled down to TV size. Returns false if it can't be read. */
-    fun saveCustom(context: Context, uri: Uri): Boolean {
+    fun saveCustom(context: Context, uri: Uri, profileId: String): Boolean {
         val bitmap = decodeSampled(context, uri, WIDTH, HEIGHT) ?: return false
-        customFile(context).outputStream().use { bitmap.compress(Bitmap.CompressFormat.JPEG, 90, it) }
+        customFile(context, profileId).outputStream().use { bitmap.compress(Bitmap.CompressFormat.JPEG, 90, it) }
         return true
     }
 

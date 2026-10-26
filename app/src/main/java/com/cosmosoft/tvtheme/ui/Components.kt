@@ -6,6 +6,8 @@ import android.content.Intent
 import android.provider.Settings
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,9 +20,18 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.window.Dialog
+import androidx.tv.material3.Glow
 import kotlinx.coroutines.delay
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -35,6 +46,7 @@ import androidx.tv.material3.LocalContentColor
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
+import com.cosmosoft.tvtheme.R
 import com.cosmosoft.tvtheme.data.LaunchableApp
 import com.cosmosoft.tvtheme.ui.theme.LocalLauncherTheme
 
@@ -65,6 +77,7 @@ internal fun AppCard(app: LaunchableApp, onOptions: () -> Unit, modifier: Modifi
             border = CardDefaults.border(
                 focusedBorder = Border(border = BorderStroke(3.dp, theme.accent), shape = CardShape),
             ),
+            glow = CardDefaults.glow(focusedGlow = Glow(elevationColor = theme.accent.copy(alpha = 0.55f), elevation = 14.dp)),
         ) {
             if (app.isTvApp) {
                 Image(
@@ -82,7 +95,7 @@ internal fun AppCard(app: LaunchableApp, onOptions: () -> Unit, modifier: Modifi
         Spacer(Modifier.height(8.dp))
         Text(
             text = app.label,
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.bodyMedium.copy(shadow = LabelShadow),
             color = theme.text.copy(alpha = 0.85f),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -94,7 +107,7 @@ internal fun AppCard(app: LaunchableApp, onOptions: () -> Unit, modifier: Modifi
 internal fun SectionTitle(text: String, modifier: Modifier = Modifier) {
     Text(
         text = text,
-        style = MaterialTheme.typography.titleLarge,
+        style = MaterialTheme.typography.titleLarge.copy(shadow = LabelShadow),
         fontWeight = FontWeight.SemiBold,
         color = LocalLauncherTheme.current.text,
         modifier = modifier,
@@ -140,6 +153,41 @@ internal fun ListRow(
             trailing?.invoke()
         }
     }
+}
+
+/** Soft dark shadow so labels stay readable on bright stripes and photo wallpapers. */
+internal val LabelShadow = Shadow(color = Color.Black.copy(alpha = 0.85f), offset = Offset(0f, 2f), blurRadius = 8f)
+
+/**
+ * Asks before something that can't be undone. Focus starts on Cancel, so a stray press of OK
+ * on the remote doesn't confirm it.
+ */
+@Composable
+internal fun ConfirmDialog(
+    title: String,
+    message: String?,
+    confirmLabel: String,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val theme = LocalLauncherTheme.current
+    val cancelFocus = remember { FocusRequester() }
+    Dialog(onDismissRequest = onDismiss) {
+        Column(
+            modifier = Modifier
+                .width(520.dp)
+                .background(theme.card, RoundedCornerShape(16.dp))
+                .padding(28.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Text(title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold, color = theme.text)
+            if (message != null) Text(message, color = theme.text.copy(alpha = 0.75f))
+            Spacer(Modifier.height(4.dp))
+            ListRow(stringResource(R.string.action_cancel), onClick = onDismiss, modifier = Modifier.focusRequester(cancelFocus))
+            ListRow(confirmLabel, onClick = onConfirm)
+        }
+    }
+    LaunchedEffect(Unit) { cancelFocus.requestFocusWhenReady() }
 }
 
 /**

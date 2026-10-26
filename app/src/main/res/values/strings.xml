@@ -66,6 +66,13 @@
     <string name="plex_expired">The code expired before it was entered.</string>
     <string name="plex_error">Couldn\'t reach Plex. Check the TV\'s internet connection.</string>
     <string name="action_retry">Try again</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_sign_out">Sign out</string>
+    <string name="action_delete">Delete</string>
+    <string name="confirm_sign_out_title">Sign out of Plex?</string>
+    <string name="confirm_sign_out_message">Continue watching, your watchlist and library rows will disappear from Home until you connect again.</string>
+    <string name="confirm_delete_profile_title">Delete %1$s?</string>
+    <string name="confirm_delete_profile_message">Their favorites, hidden apps, rows and wallpaper will be removed.</string>
     <string name="action_done">Done</string>
 
     <string name="detail_play">Play</string>

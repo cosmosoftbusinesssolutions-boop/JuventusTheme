@@ -11,7 +11,7 @@ import kotlin.reflect.KProperty
  * Everything one profile customizes, saved to SharedPreferences and exposed as Compose state
  * so the UI updates as soon as a value changes.
  */
-class LauncherSettings(context: Context, profileId: String = Profile.MAIN_ID) {
+class LauncherSettings(context: Context, val profileId: String = Profile.MAIN_ID) {
     private val prefs = context.getSharedPreferences(prefsName(profileId), Context.MODE_PRIVATE)
 
     /** App keys ([LaunchableApp.key]) in the order they appear in the Favorites row. */

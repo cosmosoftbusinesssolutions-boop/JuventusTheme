@@ -67,6 +67,7 @@ import com.cosmosoft.tvtheme.data.LauncherSettings
 import com.cosmosoft.tvtheme.data.Profile
 import com.cosmosoft.tvtheme.data.ProfileStore
 import com.cosmosoft.tvtheme.data.RatingLimit
+import com.cosmosoft.tvtheme.ui.ConfirmDialog
 import com.cosmosoft.tvtheme.ui.ListRow
 import com.cosmosoft.tvtheme.ui.SafeVertical
 import com.cosmosoft.tvtheme.ui.SectionTitle
@@ -217,6 +218,7 @@ fun ProfileEditorDialog(store: ProfileStore, profileId: String, apps: List<Launc
     var name by remember(profileId) { mutableStateOf(profile.name) }
     var settingPin by remember { mutableStateOf(false) }
     var editingApps by remember { mutableStateOf(false) }
+    var confirmingDelete by remember { mutableStateOf(false) }
     val firstRowFocus = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
@@ -329,10 +331,7 @@ fun ProfileEditorDialog(store: ProfileStore, profileId: String, apps: List<Launc
                 }
                 if (!profile.isMain) {
                     item {
-                        ListRow(stringResource(R.string.profile_delete), onClick = {
-                            store.delete(profileId)
-                            onDismiss()
-                        })
+                        ListRow(stringResource(R.string.profile_delete), onClick = { confirmingDelete = true })
                     }
                 }
             }
@@ -350,6 +349,19 @@ fun ProfileEditorDialog(store: ProfileStore, profileId: String, apps: List<Launc
     }
     if (editingApps) {
         AllowedAppsDialog(apps.orEmpty(), profileSettings, onDismiss = { editingApps = false })
+    }
+    if (confirmingDelete) {
+        ConfirmDialog(
+            title = stringResource(R.string.confirm_delete_profile_title, profile.name),
+            message = stringResource(R.string.confirm_delete_profile_message),
+            confirmLabel = stringResource(R.string.action_delete),
+            onConfirm = {
+                confirmingDelete = false
+                store.delete(profileId)
+                onDismiss()
+            },
+            onDismiss = { confirmingDelete = false },
+        )
     }
 
     LaunchedEffect(Unit) { firstRowFocus.requestFocusWhenReady() }
