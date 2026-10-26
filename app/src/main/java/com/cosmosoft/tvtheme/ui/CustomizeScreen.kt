@@ -283,7 +283,9 @@ fun CustomizeScreen(
             )
         }
 
-        item { PremiumSection(premium, inset.padding(top = 16.dp)) }
+        if (!BuildConfig.ALWAYS_PREMIUM) {
+            item { PremiumSection(premium, inset.padding(top = 16.dp)) }
+        }
 
         item { SectionTitle(stringResource(R.string.customize_default_home), inset.padding(top = 16.dp)) }
         item {

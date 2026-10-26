@@ -15,8 +15,8 @@ android {
         minSdk = 26
         // Google Play requires new apps and updates to target a recent API level.
         targetSdk = 36
-        versionCode = 2
-        versionName = "1.0.1"
+        versionCode = 3
+        versionName = "1.1.0"
     }
 
     // "play" is the Google Play build: no accessibility service and no broad photo access, per Play policy.
@@ -27,11 +27,14 @@ android {
             dimension = "store"
             buildConfigField("boolean", "HOME_BUTTON_HELPER", "false")
             buildConfigField("boolean", "SYSTEM_PHOTO_PICKER", "true")
+            buildConfigField("boolean", "ALWAYS_PREMIUM", "false")
         }
         create("sideload") {
             dimension = "store"
             buildConfigField("boolean", "HOME_BUTTON_HELPER", "true")
             buildConfigField("boolean", "SYSTEM_PHOTO_PICKER", "false")
+            // Free outside Google Play: Play Billing only works for apps installed from Play.
+            buildConfigField("boolean", "ALWAYS_PREMIUM", "true")
         }
     }
 

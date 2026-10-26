@@ -1,6 +1,7 @@
 package com.cosmosoft.tvtheme.billing
 
 import android.app.Activity
+import com.cosmosoft.tvtheme.BuildConfig
 import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,9 +54,12 @@ class Premium(context: Context) : PurchasesUpdatedListener {
             return if (left <= 0) 0 else ((left + DAY_MS - 1) / DAY_MS).toInt()
         }
 
-    val isUnlocked get() = owned || trialDaysLeft > 0
+    /** Everything unlocked: always in the free sideload build, otherwise while owned or in the trial. */
+    val isUnlocked get() = BuildConfig.ALWAYS_PREMIUM || owned || trialDaysLeft > 0
 
     fun connect() {
+        // The free build never talks to Google Play.
+        if (BuildConfig.ALWAYS_PREMIUM) return
         if (client.isReady) {
             refresh()
             return
