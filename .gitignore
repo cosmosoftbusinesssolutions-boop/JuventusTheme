@@ -9,3 +9,6 @@ local.properties
 *.jks
 *.keystore
 keystore.properties
+
+# Built APKs for sideloading
+dist/
